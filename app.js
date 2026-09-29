@@ -43,7 +43,7 @@ app.get("/api/lokasi", async (req, res) => {
             provinsi: provinsi,
             kecamatan: kecamatan,
             longitude: longitude.toFixed(4),
-  
+            latitude: latitude.toFixed(4)
         });
     } catch (error) {
         console.error(error.message);

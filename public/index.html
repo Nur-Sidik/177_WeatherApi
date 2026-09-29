@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWS 8 JULI 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: #21273d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+
+        .card {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 410px;
+            border-radius: 18px;
+            padding: 40px 32px 36px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+        }
+
+        .header-title {
+            text-align: center;
+            font-size: 11.5px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #2b324b;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .top-divider {
+            border: none;
+            border-top: 2px solid #3b4461;
+            margin-bottom: 22px;
+        }
+
+        .student-info {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .student-info .name {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: #283049;
+            margin-bottom: 5px;
+        }
+
+        .student-info .nim {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #3b486b;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .search-container input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1.5px solid #4a5568;
+            border-radius: 7px;
+            font-size: 12.5px;
+            outline: none;
+            color: #1a202c;
+        }
+
+        .search-container button {
+            background-color: #212842;
+            color: #ffffff;
+            border: none;
+            border-radius: 7px;
+            padding: 0 18px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .search-container button:hover {
+            background-color: #2f3a5e;
+        }
+
+        .results-box {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 18px;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 0;
+            font-size: 11.5px;
+        }
+
+        .data-row:not(:last-child) {
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .data-label {
+            font-weight: 800;
+            color: #3b4461;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: 120px;
+            flex-shrink: 0;
+        }
+
+        .data-value {
+            color: #2d3748;
+            font-weight: 600;
+            text-align: right;
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .error-message {
+            color: #e53e3e;
+            font-size: 11.5px;
+            text-align: center;
+            margin-bottom: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header-title">PWS 8 JULI 2026</div>
+    <hr class="top-divider">
+
+    <div class="student-info">
+        <div class="name">Nur Sidik Zainu Ahmad</div>
+        <div class="nim">20240140177</div>
+    </div>
+
+    <!-- Input Lokasi -->
+    <div class="search-container">
+        <input type="text" id="inputLokasi" value="Yogyakarta" placeholder="Ketik lokasi...">
+        <button id="btnSearch">Search</button>
+    </div>
+
+    <div id="errorMsg" class="error-message"></div>
+
+    <!-- Kotak Hasil: Negara, Provinsi, Kecamatan, Longitude, Latitude -->
+    <div class="results-box">
+        <div class="data-row">
+            <span class="data-label">NEGARA</span>
+            <span class="data-value" id="valNegara">Indonesia</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">PROVINSI</span>
+            <span class="data-value" id="valProvinsi">Sulawesi Selatan</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">KECAMATAN</span>
+            <span class="data-value" id="valKecamatan">Makassar</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">LONGITUDE</span>
+            <span class="data-value" id="valLongitude">119.4124</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">LATITUDE</span>
+            <span class="data-value" id="valLatitude">-5.1343</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    const inputLokasi = document.getElementById("inputLokasi");
+    const btnSearch = document.getElementById("btnSearch");
+    const errorMsg = document.getElementById("errorMsg");
+
+    function fetchLokasi() {
+        const query = inputLokasi.value.trim();
+        if (!query) return;
+
+        errorMsg.style.display = "none";
+
+        fetch(`/api/lokasi?kota=${encodeURIComponent(query)}`)
+            .then(res => {
+                if (!res.ok) throw new Error("Lokasi tidak ditemukan");
+                return res.json();
+            })
+            .then(data => {
+                document.getElementById("valNegara").textContent = data.negara;
+                document.getElementById("valProvinsi").textContent = data.provinsi;
+                document.getElementById("valKecamatan").textContent = data.kecamatan;
+                document.getElementById("valLongitude").textContent = data.longitude;
+                document.getElementById("valLatitude").textContent = data.latitude;
+            })
+            .catch(err => {
+                errorMsg.textContent = err.message;
+                errorMsg.style.display = "block";
+            });
+    }
+
+    btnSearch.addEventListener("click", fetchLokasi);
+    inputLokasi.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") fetchLokasi();
+    });
+
+    // Otomatis fetch saat pertama dimuat
+    fetchLokasi();
+</script>
+
+</body>
+</html>

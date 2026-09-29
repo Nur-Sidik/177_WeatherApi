@@ -40,6 +40,7 @@ app.get("/api/lokasi", async (req, res) => {
 
         res.json({
             negara: negara,
+            provinsi: provinsi,
 
         });
     } catch (error) {

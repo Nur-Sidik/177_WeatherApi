@@ -42,7 +42,8 @@ app.get("/api/lokasi", async (req, res) => {
             negara: negara,
             provinsi: provinsi,
             kecamatan: kecamatan,
-
+            longitude: longitude.toFixed(4),
+  
         });
     } catch (error) {
         console.error(error.message);
